@@ -92,16 +92,58 @@ SESSION_SECRET=replace_with_a_long_random_string
 
 ## 🐳 Docker
 
-```bash
-# Build & run with Docker Compose (uses .env.local)
-docker compose up --build
+The image uses Next.js **standalone** output for a small, production‑ready container that runs as a non‑root user.
 
-# …or with plain Docker
-docker build -t fleetview .
-docker run -p 3000:3000 --env-file .env.local fleetview
+### 1. Install Docker
+
+- **Windows / macOS:** install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+- **Linux:** install [Docker Engine](https://docs.docker.com/engine/install/) (includes the `docker compose` plugin).
+
+Verify it's working:
+
+```bash
+docker --version
+docker compose version
 ```
 
-The image uses Next.js **standalone** output for a small, production‑ready container running as a non‑root user.
+### 2. Get the code & configure environment
+
+```bash
+git clone https://github.com/numan682/tracksolid-pro-api-integration-nextjs.git
+cd tracksolid-pro-api-integration-nextjs
+cp .env.example .env.local   # then fill in your TrackSolid credentials
+```
+
+### 3. Run with Docker Compose (recommended)
+
+```bash
+docker compose up --build -d     # build the image and start in the background
+```
+
+Open **http://localhost:3000**. To follow logs or stop:
+
+```bash
+docker compose logs -f           # view logs
+docker compose down              # stop and remove the container
+```
+
+### 4. Or use plain Docker
+
+```bash
+docker build -t fleetview .
+docker run -d -p 3000:3000 --env-file .env.local --name fleetview fleetview
+```
+
+### 5. Or pull the prebuilt image (GitHub Container Registry)
+
+Every push to `main` publishes an image via GitHub Actions:
+
+```bash
+docker run -d -p 3000:3000 --env-file .env.local \
+  ghcr.io/numan682/tracksolid-pro-api-integration-nextjs:main
+```
+
+> **Note:** the container needs the same environment variables as local development — pass them with `--env-file .env.local` (Docker) or `env_file` (Compose). Never bake secrets into the image.
 
 ## 📦 Available scripts
 
