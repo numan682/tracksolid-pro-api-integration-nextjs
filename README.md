@@ -58,8 +58,8 @@ shadcn UI ──▶ TrackSolid Pro Open API  (jimi.* methods)
 ### Installation
 
 ```bash
-git clone https://github.com/<your-username>/TrackSolid-Pro-API-Integration.git
-cd TrackSolid-Pro-API-Integration
+git clone https://github.com/numan682/tracksolid-pro-api-integration-nextjs.git
+cd tracksolid-pro-api-integration-nextjs
 npm install
 cp .env.example .env.local   # then fill in your credentials
 npm run dev                  # http://localhost:3000
