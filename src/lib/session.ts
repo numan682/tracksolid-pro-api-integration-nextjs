@@ -12,6 +12,15 @@ import {
 export type { SessionData } from "@/lib/session-crypto";
 export { SESSION_COOKIE_NAME } from "@/lib/session-crypto";
 
+// Whether the session cookie gets the `Secure` flag. Browsers drop Secure
+// cookies sent over plain HTTP, so a production deploy reached over http://
+// (e.g. a bare-IP VPS without TLS) must set COOKIE_SECURE=false. Defaults to
+// secure in production, insecure in development.
+const COOKIE_SECURE =
+  process.env.COOKIE_SECURE !== undefined
+    ? process.env.COOKIE_SECURE === "true"
+    : process.env.NODE_ENV === "production";
+
 export async function createSession(data: Omit<SessionData, "exp">) {
   const exp = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
   const token = seal({ ...data, exp });
@@ -19,7 +28,7 @@ export async function createSession(data: Omit<SessionData, "exp">) {
 
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: COOKIE_SECURE,
     sameSite: "lax",
     path: "/",
     maxAge: SESSION_TTL_SECONDS,
@@ -37,7 +46,7 @@ export async function persistSessionToken(base: SessionData, token: string, toke
   const maxAge = Math.max(base.exp - Math.floor(Date.now() / 1000), 60);
   cookieStore.set(SESSION_COOKIE_NAME, seal({ ...base, token, tokenExp }), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: COOKIE_SECURE,
     sameSite: "lax",
     path: "/",
     maxAge,
